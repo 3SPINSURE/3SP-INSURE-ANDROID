@@ -1,0 +1,38 @@
+
+name: 3SP INSURE Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: '8.9'
+
+      - name: Extract Android Project
+        run: unzip -o 3SP_INSURE_Android_Starter.zip -d .
+
+      - name: Build APK
+        run: gradle -p 3sp_insure_android assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3SP-INSURE-APK
+          path: 3sp_insure_android/app/build/outputs/apk/debug/app-debug.apk
